@@ -11,21 +11,14 @@ import warnings
 
 import numpy as np
 import scipy.sparse as sp
-
+from joblib import Parallel, delayed
 from sklearn.base import BaseEstimator, ClusterMixin, TransformerMixin
-from sklearn.cluster import k_means_
-from sklearn.cluster import _k_means
-from sklearn.externals.joblib import Parallel
-from sklearn.externals.joblib import delayed
+from sklearn.cluster import k_means, k_means_
 from sklearn.metrics.pairwise import euclidean_distances
+from sklearn.utils import as_float_array, check_array, check_random_state
 from sklearn.utils.extmath import row_norms, squared_norm
 from sklearn.utils.sparsefuncs import mean_variance_axis
-from sklearn.utils import check_array
-from sklearn.utils import check_random_state
-from sklearn.utils import as_float_array
-from sklearn.utils.validation import check_is_fitted
-from sklearn.utils.validation import FLOAT_DTYPES
-
+from sklearn.utils.validation import FLOAT_DTYPES, check_is_fitted
 
 
 class EqualGroupsKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
@@ -498,10 +491,10 @@ def _kmeans_single(X, n_clusters, x_squared_norms, max_iter=300,
         sample_weight = [1.0] * np.asarray(len(labels))
         # computation of the means is also called the M-step of EM
         if sp.issparse(X):
-            centers = _k_means._centers_sparse(X, sample_weight, labels, n_clusters,
-                                               distances)
+            centers = k_means._centers_sparse(X, sample_weight, labels, n_clusters,
+                                              distances)
         else:
-            centers = _k_means._centers_dense(X, sample_weight, labels, n_clusters, distances)
+            centers = k_means._centers_dense(X, sample_weight, labels, n_clusters, distances)
 
         if verbose:
             print("Iteration %2d, inertia %.3f" % (i, inertia))
